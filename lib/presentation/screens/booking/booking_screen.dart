@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/booking_bloc.dart';
+import './bloc/booking_bloc.dart';
 import 'widgets/booking_tile.dart';
 import 'widgets/error_screen.dart';
+import '/data/repositories/booking_repository.dart';
 
 class BookingScreen extends StatelessWidget {
   const BookingScreen({super.key});

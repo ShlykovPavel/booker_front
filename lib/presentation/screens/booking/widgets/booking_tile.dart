@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../data/models/booking_models.dart';
+import '././/data/models/booking_models.dart';
 
 class BookingTile extends StatelessWidget {
   final BookingTypeInfoList booking;
