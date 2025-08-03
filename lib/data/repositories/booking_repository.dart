@@ -13,4 +13,14 @@ class BookingRepository {
       throw Exception('Ошибка сервера: ${response.statusCode}');
     }
   }
+
+  Future<List<BookingTypeEntitiesResponse>> fetchBookingEntities(int bookingTypeId) async {
+    final response = await _dioClient.get('/bookingsEntity/$bookingTypeId');
+    if (response.statusCode == 200) {
+      final List<dynamic> data = response.data; // Предполагаем, что возвращается массив
+      return data.map((json) => BookingTypeEntitiesResponse.fromJson(json)).toList();
+    } else {
+      throw Exception('Ошибка сервера: ${response.statusCode}');
+    }
+  }
 }

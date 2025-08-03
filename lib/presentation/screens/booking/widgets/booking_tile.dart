@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '././/data/models/booking_models.dart';
+import '././/./data/models/booking_models.dart';
 
 class BookingTile extends StatelessWidget {
   final BookingTypeInfoList booking;
+  final VoidCallback? onTap;
 
-  const BookingTile({super.key, required this.booking});
+  const BookingTile({super.key, required this.booking, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +15,7 @@ class BookingTile extends StatelessWidget {
         leading: const Icon(Icons.bookmark_border),
         title: Text(booking.name),
         subtitle: Text(booking.description),
-        onTap: () {
-          // Логика при нажатии (добавить позже)
-        },
+        onTap: onTap,
       ),
     );
   }

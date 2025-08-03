@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import './bloc/booking_bloc.dart';
-import 'widgets/booking_tile.dart';
-import 'widgets/error_screen.dart';
-import '/data/repositories/booking_repository.dart';
+import './widgets/booking_tile.dart';
+import './widgets/error_screen.dart';
+import '././/./data/repositories/booking_repository.dart';
 
 class BookingScreen extends StatelessWidget {
   const BookingScreen({super.key});
@@ -20,14 +21,20 @@ class BookingScreen extends StatelessWidget {
         body: BlocBuilder<BookingBloc, BookingState>(
           builder: (context, state) {
             if (state is BookingLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator(color: Colors.blue));
             } else if (state is BookingLoaded) {
               final bookingTypes = state.data.bookingTypes;
               return ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: bookingTypes.length,
                 itemBuilder: (context, index) {
-                  return BookingTile(booking: bookingTypes[index]);
+                  final booking = bookingTypes[index];
+                  return BookingTile(
+                    booking: booking,
+                    onTap: () {
+                      context.push('/booking/entity/${booking.id}'); // Навигация на новый экран
+                    },
+                  );
                 },
               );
             } else if (state is BookingError) {
