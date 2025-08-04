@@ -1,12 +1,12 @@
+import 'package:booker_front/presentation/screens/booking_calendar/bloc/booking_calendar_bloc.dart';
+import 'package:booker_front/data/models/booking_models.dart';
 import 'package:booker_front/data/repositories/booking_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'bloc/booking_calendar_bloc.dart';
 import 'widgets/booking_tile.dart';
 import '../booking_entity/bloc/booking_entity_bloc.dart';
-// import '../../data/repositories/booking_repository.dart';
 import '../create_booking/create_booking_screen.dart';
 
 class BookingCalendarScreen extends StatelessWidget {
@@ -168,11 +168,13 @@ class BookingCalendarScreen extends StatelessWidget {
                 if (state is BookingCalendarLoaded) {
                   selectedDay = state.selectedDay;
                 }
+                final bloc = context.read<BookingCalendarBloc>();
                 return FloatingActionButton(
                   onPressed: () {
                     context.push('/create-booking', extra: {
                       'selectedDay': selectedDay,
                       'bookingEntityId': bookingEntityId,
+                      'bloc': bloc, // Передаём Bloc
                     });
                   },
                   backgroundColor: Colors.blue,

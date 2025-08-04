@@ -1,10 +1,9 @@
 import 'package:booker_front/data/models/booking_models.dart';
 import 'package:booker_front/data/repositories/booking_repository.dart';
+import 'package:booker_front/presentation/screens/booking_calendar/bloc/booking_calendar_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-// import '../../data/repositories/booking_repository.dart';
-// import '../../data/models/booking_models.dart';
 
 class BookingConfirmationScreen extends StatefulWidget {
   final DateTime selectedDay;
@@ -143,6 +142,9 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
     }
 
     if (_bookingInfo != null) {
+      final extra = GoRouterState.of(context).extra as Map<String, dynamic>?;
+      final bloc = extra?['bloc'] as BookingCalendarBloc?;
+
       return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -183,13 +185,18 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    if (bloc != null) {
+                      bloc.add(LoadBookings(widget.bookingEntityId));
+                    }
+                    context.push('/booking/calendar/${widget.bookingEntityId}');
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   child: const Text(
-                    'Подтверждено',
+                    'Вернуться к календарю',
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
