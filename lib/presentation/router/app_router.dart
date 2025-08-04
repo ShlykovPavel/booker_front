@@ -5,6 +5,7 @@ import '../screens/booking_entity/booking_entity_screen.dart';
 import '../screens/booking_calendar/booking_calendar_screen.dart';
 import '../screens/booking_detail/booking_detail_screen.dart';
 import '../screens/edit_booking/edit_booking_screen.dart';
+import '../screens/create_booking/create_booking_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/booking',
@@ -39,6 +40,13 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
         return EditBookingScreen(bookingId: id);
+      },
+    ),
+    GoRoute(
+      path: '/create-booking',
+      builder: (context, state) {
+        final selectedDay = state.extra as DateTime?;
+        return CreateBookingScreen(selectedDay: selectedDay ?? DateTime.now());
       },
     ),
   ],
