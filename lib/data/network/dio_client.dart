@@ -1,5 +1,6 @@
+import 'package:booker_front/config/app_config.dart';
 import 'package:dio/dio.dart';
-import './/config/app_config.dart';
+// import './config/app_config.dart';
 
 class DioClient {
   final Dio _dio = Dio();
@@ -16,6 +17,15 @@ class DioClient {
   Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
     try {
       final response = await _dio.get(path, queryParameters: queryParameters);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> post(String path, {dynamic data, Map<String, dynamic>? queryParameters}) async {
+    try {
+      final response = await _dio.post(path, data: data, queryParameters: queryParameters);
       return response;
     } catch (e) {
       rethrow;

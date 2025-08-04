@@ -2,8 +2,6 @@ import 'package:dio/dio.dart';
 import '../models/booking_models.dart';
 import '../network/dio_client.dart';
 
-
-
 class BookingRepository {
   final DioClient _dioClient = DioClient();
 
@@ -52,5 +50,9 @@ class BookingRepository {
 
   Future<Response> deleteBooking(int bookingId) async {
     return await _dioClient.delete('/bookings/$bookingId');
+  }
+
+  Future<Response> createBooking(Map<String, dynamic> bookingRequest) async {
+    return await _dioClient.post('/bookings', data: bookingRequest);
   }
 }

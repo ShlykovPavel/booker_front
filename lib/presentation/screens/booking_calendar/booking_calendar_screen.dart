@@ -170,7 +170,10 @@ class BookingCalendarScreen extends StatelessWidget {
                 }
                 return FloatingActionButton(
                   onPressed: () {
-                    context.push('/create-booking', extra: {'selectedDay': selectedDay, 'bookingEntityId': bookingEntityId});
+                    context.push('/create-booking', extra: {
+                      'selectedDay': selectedDay,
+                      'bookingEntityId': bookingEntityId,
+                    });
                   },
                   backgroundColor: Colors.blue,
                   child: const Icon(Icons.add, color: Colors.white),

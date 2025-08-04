@@ -6,7 +6,7 @@ import '../screens/booking_calendar/booking_calendar_screen.dart';
 import '../screens/booking_detail/booking_detail_screen.dart';
 import '../screens/edit_booking/edit_booking_screen.dart';
 import '../screens/create_booking/create_booking_screen.dart';
-import '../screens/confirm_booking/confirm_booking_screen.dart';
+import '../screens/booking_confirmation/booking_confirmation_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/booking',
@@ -46,20 +46,20 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/create-booking',
       builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>?; // Изменяем тип на Map
+        final extra = state.extra as Map<String, dynamic>?;
         final selectedDay = extra?['selectedDay'] as DateTime?;
-        final bookingEntityId = extra?['bookingEntityId'] as int?; // Добавляем ID
+        final bookingEntityId = extra?['bookingEntityId'] as int?;
         return CreateBookingScreen(
           selectedDay: selectedDay ?? DateTime.now(),
-          bookingEntityId: bookingEntityId ?? 0, // Значение по умолчанию, если ID нет
+          bookingEntityId: bookingEntityId ?? 0,
         );
       },
     ),
     GoRoute(
-      path: '/confirm-booking',
+      path: '/booking-confirmation',
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>?;
-        return ConfirmBookingScreen(
+        return BookingConfirmationScreen(
           selectedDay: extra?['selectedDay'] as DateTime,
           startTime: extra?['startTime'] as DateTime,
           endTime: extra?['endTime'] as DateTime,

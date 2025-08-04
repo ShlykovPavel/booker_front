@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
-import '../confirm_booking/confirm_booking_screen.dart';
+import '../booking_confirmation/booking_confirmation_screen.dart';
 
 class CreateBookingScreen extends StatefulWidget {
   final DateTime selectedDay;
-  final int bookingEntityId; // Используем ID для связи с объектом
+  final int bookingEntityId;
 
   const CreateBookingScreen({super.key, required this.selectedDay, required this.bookingEntityId});
 
@@ -23,9 +23,9 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
   @override
   void initState() {
     super.initState();
-    _startTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, 9); // Утро по умолчанию
-    _endTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, 17); // Вечер по умолчанию
-    _selectedPickerTime = _startTime; // Инициализация для пикера
+    _startTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, 9);
+    _endTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, 17);
+    _selectedPickerTime = _startTime;
   }
 
   Future<void> _selectStartTime() async {
@@ -132,9 +132,7 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
   }
 
   void _updateButtonState() {
-    setState(() {
-      // Обновление состояния для перерисовки
-    });
+    setState(() {});
   }
 
   @override
@@ -218,7 +216,7 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
                 onPressed: isButtonEnabled
                     ? () {
                   context.push(
-                    '/confirm-booking',
+                    '/booking-confirmation',
                     extra: {
                       'selectedDay': widget.selectedDay,
                       'startTime': _startTime,
