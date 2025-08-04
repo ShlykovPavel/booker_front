@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
+import '../confirm_booking/confirm_booking_screen.dart';
 
 class CreateBookingScreen extends StatefulWidget {
   final DateTime selectedDay;
+  final int bookingEntityId; // Используем ID для связи с объектом
 
-  const CreateBookingScreen({super.key, required this.selectedDay});
+  const CreateBookingScreen({super.key, required this.selectedDay, required this.bookingEntityId});
 
   @override
   State<CreateBookingScreen> createState() => _CreateBookingScreenState();
@@ -213,7 +215,20 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: isButtonEnabled ? () {} : null,
+                onPressed: isButtonEnabled
+                    ? () {
+                  context.push(
+                    '/confirm-booking',
+                    extra: {
+                      'selectedDay': widget.selectedDay,
+                      'startTime': _startTime,
+                      'endTime': _endTime,
+                      'isAllDay': _isAllDay,
+                      'bookingEntityId': widget.bookingEntityId,
+                    },
+                  );
+                }
+                    : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isButtonEnabled ? Colors.blue : Colors.grey,
                   padding: const EdgeInsets.symmetric(vertical: 16),
