@@ -13,9 +13,28 @@ class DioClient {
     };
   }
 
-  Future<Response> get(String path) async {
+  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
     try {
-      return await _dio.get(path);
+      final response = await _dio.get(path, queryParameters: queryParameters);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> put(String path, {required Map<String, dynamic> data}) async {
+    try {
+      final response = await _dio.put(path, data: data);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> delete(String path) async {
+    try {
+      final response = await _dio.delete(path);
+      return response;
     } catch (e) {
       rethrow;
     }

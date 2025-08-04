@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../booking/bloc/booking_bloc.dart';
-import 'bloc/booking_entity_bloc.dart';
+import './bloc/booking_entity_bloc.dart';
 import 'widgets/booking_entity_tile.dart';
+import 'widgets/error_screen.dart';
 import '././/./data/repositories/booking_repository.dart';
 
 class BookingEntityScreen extends StatelessWidget {
@@ -19,7 +19,7 @@ class BookingEntityScreen extends StatelessWidget {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(), // Возврат на предыдущий экран
+            onPressed: () => context.pop(),
           ),
           title: const Text('Выберите объект', style: TextStyle(color: Colors.black87)),
           backgroundColor: Colors.white,
@@ -34,28 +34,21 @@ class BookingEntityScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 itemCount: entities.length,
                 itemBuilder: (context, index) {
-                  return BookingEntityTile(entity: entities[index]);
+                  final entity = entities[index];
+                  return BookingEntityTile(
+                    entity: entity,
+                    onTap: () {
+                      context.push('/booking/calendar/${entity.id}');
+                    },
+                  );
                 },
               );
             } else if (state is BookingEntityError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.error, size: 50, color: Colors.red),
-                    const SizedBox(height: 16),
-                    Text('Что-то пошло не так: ${state.message}',
-                        textAlign: TextAlign.center, style: const TextStyle(fontSize: 18)),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                      onPressed: () {
-                        context.read<BookingEntityBloc>().add(FetchBookingEntities(bookingTypeId));
-                      },
-                      child: const Text('Попробовать снова', style: TextStyle(color: Colors.white)),
-                    ),
-                  ],
-                ),
+              return ErrorScreen(
+                message: state.message,
+                onRetry: () {
+                  context.read<BookingEntityBloc>().add(FetchBookingEntities(bookingTypeId));
+                },
               );
             } else if (state is BookingEntityEmpty) {
               return const Center(
