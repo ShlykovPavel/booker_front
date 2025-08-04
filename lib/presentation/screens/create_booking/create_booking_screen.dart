@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/cupertino.dart';
 
 class CreateBookingScreen extends StatefulWidget {
   final DateTime selectedDay;
@@ -15,42 +16,106 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
   late DateTime _startTime;
   late DateTime _endTime;
   bool _isAllDay = false;
+  late DateTime _selectedPickerTime;
 
   @override
   void initState() {
     super.initState();
     _startTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, 9); // Утро по умолчанию
     _endTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, 17); // Вечер по умолчанию
+    _selectedPickerTime = _startTime; // Инициализация для пикера
   }
 
-  void _selectStartTime() async {
+  Future<void> _selectStartTime() async {
     if (!_isAllDay) {
-      final TimeOfDay? picked = await showTimePicker(
+      final TimeOfDay initialTime = TimeOfDay.fromDateTime(_startTime);
+      final picked = await showCupertinoDialog<TimeOfDay>(
         context: context,
-        initialTime: TimeOfDay.fromDateTime(_startTime),
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return _buildTimePickerDialog(initialTime, 'Выберите время начала');
+        },
       );
       if (picked != null) {
         setState(() {
           _startTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, picked.hour, picked.minute);
-          _updateButtonState();
         });
+        _updateButtonState();
       }
     }
   }
 
-  void _selectEndTime() async {
+  Future<void> _selectEndTime() async {
     if (!_isAllDay) {
-      final TimeOfDay? picked = await showTimePicker(
+      final TimeOfDay initialTime = TimeOfDay.fromDateTime(_endTime);
+      final picked = await showCupertinoDialog<TimeOfDay>(
         context: context,
-        initialTime: TimeOfDay.fromDateTime(_endTime),
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return _buildTimePickerDialog(initialTime, 'Выберите время окончания');
+        },
       );
       if (picked != null) {
         setState(() {
           _endTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, picked.hour, picked.minute);
-          _updateButtonState();
         });
+        _updateButtonState();
       }
     }
+  }
+
+  Widget _buildTimePickerDialog(TimeOfDay initialTime, String title) {
+    DateTime selectedDateTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, initialTime.hour, initialTime.minute);
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 200,
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.time,
+                initialDateTime: selectedDateTime,
+                onDateTimeChanged: (DateTime newDateTime) {
+                  selectedDateTime = newDateTime;
+                },
+                use24hFormat: true,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Отмена', style: TextStyle(color: Colors.blue)),
+                ),
+                const SizedBox(width: 8),
+                TextButton(
+                  onPressed: () {
+                    final selectedTime = TimeOfDay.fromDateTime(selectedDateTime);
+                    Navigator.pop(context, selectedTime);
+                  },
+                  child: const Text('Готово', style: TextStyle(color: Colors.blue)),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _toggleAllDay(bool value) {
@@ -65,7 +130,9 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
   }
 
   void _updateButtonState() {
-    // Кнопка активна, если есть время или включён "Весь день"
+    setState(() {
+      // Обновление состояния для перерисовки
+    });
   }
 
   @override
