@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 import '././/./data/models/booking_models.dart';
-import 'package:flutter/material.dart';
-
-
 
 class BookingTile extends StatelessWidget {
   final BookingInfo booking;
@@ -12,19 +11,36 @@ class BookingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Конвертация времени из UTC в локальное
+    DateTime localStartTime = booking.startTime.toLocal();
+    DateTime localEndTime = booking.endTime.toLocal();
+
+    // Форматирование времени в HH:mm
+    DateFormat formatter = DateFormat('HH:mm');
+    String formattedStartTime = formatter.format(localStartTime);
+    String formattedEndTime = formatter.format(localEndTime);
     return InkWell(
       onTap: onTap,
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text('ID: ${booking.id}', style: const TextStyle(fontSize: 16)),
-              Text('Start: ${booking.startTime.toIso8601String()}', style: const TextStyle(fontSize: 14)),
-              Text('End: ${booking.endTime.toIso8601String()}', style: const TextStyle(fontSize: 14)),
-              Text('Status: ${booking.status}', style: const TextStyle(fontSize: 14)),
+              const Icon(Icons.access_time, size: 32, color: Colors.orange),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('ID: ${booking.id}',
+                      style: const TextStyle(fontSize: 16)),
+                  Text('Начало: $formattedStartTime',
+                      style: const TextStyle(fontSize: 14)),
+                  Text('Конец: $formattedEndTime',
+                      style: const TextStyle(fontSize: 14)),
+                ],
+              ),
             ],
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '././/./data/repositories/booking_repository.dart';
 import 'bloc/booking_detail_bloc.dart';
@@ -29,10 +30,10 @@ class BookingDetailScreen extends StatelessWidget {
         body: BlocListener<BookingDetailBloc, BookingDetailState>(
           listener: (context, state) {
             if (state is BookingDetailSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Бронирование удалено')),
-              );
-              // context.pop();
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //   const SnackBar(content: Text('Бронирование удалено')),
+              // );
+              // // context.pop();
             }
           },
           child: BlocBuilder<BookingDetailBloc, BookingDetailState>(
@@ -42,6 +43,14 @@ class BookingDetailScreen extends StatelessWidget {
                     child: CircularProgressIndicator(color: Colors.blue));
               }
               if (state is BookingDetailSuccess) {
+                DateTime localStartTime = state.bookingInfo.startTime.toLocal();
+                DateTime localEndTime = state.bookingInfo.endTime.toLocal();
+
+                // Форматирование времени в HH:mm
+                DateFormat formatter = DateFormat('HH:mm');
+                String formattedStartTime = formatter.format(localStartTime);
+                String formattedEndTime = formatter.format(localEndTime);
+
                 return Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -56,12 +65,10 @@ class BookingDetailScreen extends StatelessWidget {
                       Text('Booking Entity: ${state.bookingInfo.bookingEntity}',
                           style: const TextStyle(fontSize: 18)),
                       const SizedBox(height: 8),
-                      Text(
-                          'Start Time: ${state.bookingInfo.startTime.toIso8601String()}',
+                      Text('Start Time: $formattedStartTime',
                           style: const TextStyle(fontSize: 18)),
                       const SizedBox(height: 8),
-                      Text(
-                          'End Time: ${state.bookingInfo.endTime.toIso8601String()}',
+                      Text('End Time: $formattedEndTime',
                           style: const TextStyle(fontSize: 18)),
                       const SizedBox(height: 8),
                       Text('Status: ${state.bookingInfo.status}',
@@ -73,7 +80,7 @@ class BookingDetailScreen extends StatelessWidget {
                           icon: const Icon(Icons.edit,
                               color: Colors.blue, size: 30),
                           onPressed: () {
-                            showModalBottomSheet(
+                            showModalBottomSheet<bool>(
                               context: context,
                               isScrollControlled: true,
                               backgroundColor: Colors.white,
@@ -82,7 +89,11 @@ class BookingDetailScreen extends StatelessWidget {
                                     top: Radius.circular(20)),
                               ),
                               builder: (context) {
-                                return BookingEditSlider(bookingId: bookingId);
+                                return BookingEditSlider(
+                                  bookingId: bookingId,
+                                  startDate: state.bookingInfo.startTime,
+                                  endDate: state.bookingInfo.endTime,
+                                );
                               },
                             ).then((value) {
                               // После закрытия слайдера проверяем, было ли выбрано удаление

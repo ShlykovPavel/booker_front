@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:booker_front/presentation/screens/edit_booking/edit_booking_screen.dart';
 import 'package:go_router/go_router.dart';
+
 import '../screens/booking/booking_screen.dart';
-import '../screens/booking_entity/booking_entity_screen.dart';
 import '../screens/booking_calendar/booking_calendar_screen.dart';
-import '../screens/booking_detail/booking_detail_screen.dart';
-import '../screens/edit_booking/edit_booking_screen.dart';
-import '../screens/create_booking/create_booking_screen.dart';
 import '../screens/booking_confirmation/booking_confirmation_screen.dart';
+import '../screens/booking_detail/booking_detail_screen.dart';
+import '../screens/booking_entity/booking_entity_screen.dart';
+import '../screens/create_booking/create_booking_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/booking',
@@ -40,7 +40,15 @@ final GoRouter appRouter = GoRouter(
       path: '/edit-booking/:id',
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
-        return EditBookingScreen(bookingId: id);
+        final extra = state.extra as Map<String, dynamic>?;
+
+        return EditBookingScreen(
+          bookingEntityId: id,
+          startDate: extra?['startDate'] as DateTime?,
+          endDate: extra?['endDate'] as DateTime?,
+          selectedDay:
+              extra?['startDate'] as DateTime? ?? DateTime.now(), // если нужно
+        );
       },
     ),
     GoRoute(
@@ -65,6 +73,7 @@ final GoRouter appRouter = GoRouter(
           endTime: extra?['endTime'] as DateTime,
           isAllDay: extra?['isAllDay'] as bool,
           bookingEntityId: extra?['bookingEntityId'] as int,
+          isEditMode: extra?['isEditMode'] as bool? ?? false,
         );
       },
     ),

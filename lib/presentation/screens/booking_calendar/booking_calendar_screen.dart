@@ -57,6 +57,9 @@ class BookingCalendarScreen extends StatelessWidget {
                           .add(SelectDay(state.selectedDay, focusedDay));
                     },
                     calendarStyle: CalendarStyle(
+                      todayTextStyle: const TextStyle(
+                        color: Colors.black,
+                      ),
                       todayDecoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(color: Colors.blue, width: 1.0),

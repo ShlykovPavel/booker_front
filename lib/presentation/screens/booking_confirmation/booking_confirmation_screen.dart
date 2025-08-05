@@ -11,6 +11,7 @@ class BookingConfirmationScreen extends StatefulWidget {
   final DateTime endTime;
   final bool isAllDay;
   final int bookingEntityId;
+  final bool isEditMode;
 
   const BookingConfirmationScreen({
     super.key,
@@ -19,10 +20,12 @@ class BookingConfirmationScreen extends StatefulWidget {
     required this.endTime,
     required this.isAllDay,
     required this.bookingEntityId,
+    this.isEditMode = false,
   });
 
   @override
-  State<BookingConfirmationScreen> createState() => _BookingConfirmationScreenState();
+  State<BookingConfirmationScreen> createState() =>
+      _BookingConfirmationScreenState();
 }
 
 class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
@@ -39,8 +42,12 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
     try {
       final bookingRequest = {
         'booking_entity_id': widget.bookingEntityId,
-        'start_time': widget.startTime.toUtc().toIso8601String().replaceAll('+00:00', 'Z'),
-        'end_time': widget.endTime.toUtc().toIso8601String().replaceAll('+00:00', 'Z'),
+        'start_time': widget.startTime
+            .toUtc()
+            .toIso8601String()
+            .replaceAll('+00:00', 'Z'),
+        'end_time':
+            widget.endTime.toUtc().toIso8601String().replaceAll('+00:00', 'Z'),
         'status': 'pending',
       };
 
@@ -52,12 +59,72 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
         final bookingDetails = await BookingRepository().getBooking(bookingId);
         if (bookingDetails.statusCode == 200) {
           setState(() {
-            _bookingInfo = BookingInfo.fromJson(bookingDetails.data as Map<String, dynamic>);
+            _bookingInfo = BookingInfo.fromJson(
+                bookingDetails.data as Map<String, dynamic>);
             _isLoading = false;
           });
         } else {
           setState(() {
-            _errorMessage = 'Ошибка при получении деталей бронирования: ${bookingDetails.statusCode}';
+            _errorMessage =
+                'Ошибка при получении деталей бронирования: ${bookingDetails.statusCode}';
+            _isLoading = false;
+          });
+        }
+      } else if (response.statusCode == 400) {
+        final errorData = response.data as Map<String, dynamic>;
+        setState(() {
+          _errorMessage = errorData['error'] ?? 'Неизвестная ошибка';
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _errorMessage = 'Ошибка сервера: ${response.statusCode}';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Ошибка: $e';
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _editBooking() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final bookingRequest = {
+        'booking_entity_id': widget.bookingEntityId,
+        'start_time': widget.startTime
+            .toUtc()
+            .toIso8601String()
+            .replaceAll('+00:00', 'Z'),
+        'end_time':
+            widget.endTime.toUtc().toIso8601String().replaceAll('+00:00', 'Z'),
+        'status': 'pending',
+      };
+
+      final response = await BookingRepository()
+          .updateBooking(widget.bookingEntityId, bookingRequest);
+      if (response.statusCode == 200) {
+        final responseData = response.data as Map<String, dynamic>;
+        final bookingId = responseData['id'] as int;
+
+        final bookingDetails = await BookingRepository().getBooking(bookingId);
+        if (bookingDetails.statusCode == 200) {
+          setState(() {
+            _bookingInfo = BookingInfo.fromJson(
+                bookingDetails.data as Map<String, dynamic>);
+            _isLoading = false;
+          });
+        } else {
+          setState(() {
+            _errorMessage =
+                'Ошибка при получении деталей бронирования: ${bookingDetails.statusCode}';
             _isLoading = false;
           });
         }
@@ -128,7 +195,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 )
               else
                 ElevatedButton(
-                  onPressed: _confirmBooking,
+                  onPressed: widget.isEditMode ? _editBooking : _confirmBooking,
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                   child: const Text(
                     'Попробовать снова',
@@ -173,7 +240,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
               ),
               const SizedBox(height: 10),
               Text(
-                'Время: ${widget.isAllDay ? 'Весь день' : '${DateFormat('HH:mm').format(_bookingInfo!.startTime)} - ${DateFormat('HH:mm').format(_bookingInfo!.endTime)}'}',
+                'Время: ${widget.isAllDay ? 'Весь день' : '${DateFormat('HH:mm').format(_bookingInfo!.startTime.toLocal())} - ${DateFormat('HH:mm').format(_bookingInfo!.endTime.toLocal())}'}',
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 10),
@@ -247,7 +314,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _confirmBooking,
+                onPressed: widget.isEditMode ? _editBooking : _confirmBooking,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   padding: const EdgeInsets.symmetric(vertical: 16),
