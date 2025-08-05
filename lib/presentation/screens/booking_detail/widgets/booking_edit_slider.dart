@@ -3,10 +3,15 @@ import 'package:go_router/go_router.dart';
 
 class BookingEditSlider extends StatelessWidget {
   final int bookingId;
+  final int bookingEntityId;
   final DateTime? startDate;
   final DateTime? endDate;
   const BookingEditSlider(
-      {super.key, required this.bookingId, this.startDate, this.endDate});
+      {super.key,
+      required this.bookingId,
+      required this.bookingEntityId,
+      this.startDate,
+      this.endDate});
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +36,7 @@ class BookingEditSlider extends StatelessWidget {
                 extra: {
                   'startDate': startDate, // передайте ваши значения
                   'endDate': endDate,
+                  'bookingEntityId': bookingEntityId,
                 },
               );
             },

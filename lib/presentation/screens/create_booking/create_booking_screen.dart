@@ -40,7 +40,8 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
 
   Future<void> _selectStartTime() async {
     if (!_isAllDay) {
-      final TimeOfDay initialTime = TimeOfDay.fromDateTime(_startTime);
+      final TimeOfDay initialTime =
+          TimeOfDay.fromDateTime(_startTime.toLocal());
       final picked = await showCupertinoDialog<TimeOfDay>(
         context: context,
         barrierDismissible: true,
@@ -64,7 +65,7 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
 
   Future<void> _selectEndTime() async {
     if (!_isAllDay) {
-      final TimeOfDay initialTime = TimeOfDay.fromDateTime(_endTime);
+      final TimeOfDay initialTime = TimeOfDay.fromDateTime(_endTime.toLocal());
       final picked = await showCupertinoDialog<TimeOfDay>(
         context: context,
         barrierDismissible: true,

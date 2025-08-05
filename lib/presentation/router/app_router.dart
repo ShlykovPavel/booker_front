@@ -43,7 +43,8 @@ final GoRouter appRouter = GoRouter(
         final extra = state.extra as Map<String, dynamic>?;
 
         return EditBookingScreen(
-          bookingEntityId: id,
+          bookingID: id,
+          bookingEntityId: extra?['bookingEntityId'] as int,
           startDate: extra?['startDate'] as DateTime?,
           endDate: extra?['endDate'] as DateTime?,
           selectedDay:
@@ -74,6 +75,7 @@ final GoRouter appRouter = GoRouter(
           isAllDay: extra?['isAllDay'] as bool,
           bookingEntityId: extra?['bookingEntityId'] as int,
           isEditMode: extra?['isEditMode'] as bool? ?? false,
+          bookingId: extra?['bookingId'] as int? ?? 0,
         );
       },
     ),
