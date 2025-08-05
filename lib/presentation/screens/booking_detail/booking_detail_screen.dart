@@ -89,10 +89,13 @@ class BookingDetailScreen extends StatelessWidget {
                                     top: Radius.circular(20)),
                               ),
                               builder: (context) {
+                                final bookingEntityId =
+                                    state.bookingInfo.bookingEntity;
                                 return BookingEditSlider(
                                   bookingId: bookingId,
                                   startDate: state.bookingInfo.startTime,
                                   endDate: state.bookingInfo.endTime,
+                                  bookingEntityId: bookingEntityId,
                                 );
                               },
                             ).then((value) {

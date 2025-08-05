@@ -8,13 +8,15 @@ class EditBookingScreen extends StatefulWidget {
   final DateTime? startDate;
   final DateTime? endDate;
   final int bookingEntityId;
+  final int bookingID;
 
   const EditBookingScreen(
       {super.key,
       required this.selectedDay,
       required this.bookingEntityId,
       this.startDate,
-      this.endDate});
+      this.endDate,
+      required this.bookingID});
 
   @override
   State<EditBookingScreen> createState() => _EditBookingScreenState();
@@ -40,7 +42,8 @@ class _EditBookingScreenState extends State<EditBookingScreen> {
 
   Future<void> _selectStartTime() async {
     if (!_isAllDay) {
-      final TimeOfDay initialTime = TimeOfDay.fromDateTime(_startTime);
+      final TimeOfDay initialTime =
+          TimeOfDay.fromDateTime(_startTime.toLocal());
       final picked = await showCupertinoDialog<TimeOfDay>(
         context: context,
         barrierDismissible: true,
@@ -64,7 +67,7 @@ class _EditBookingScreenState extends State<EditBookingScreen> {
 
   Future<void> _selectEndTime() async {
     if (!_isAllDay) {
-      final TimeOfDay initialTime = TimeOfDay.fromDateTime(_endTime);
+      final TimeOfDay initialTime = TimeOfDay.fromDateTime(_endTime.toLocal());
       final picked = await showCupertinoDialog<TimeOfDay>(
         context: context,
         barrierDismissible: true,
@@ -260,6 +263,7 @@ class _EditBookingScreenState extends State<EditBookingScreen> {
                             'isAllDay': _isAllDay,
                             'bookingEntityId': widget.bookingEntityId,
                             'isEditMode': true,
+                            'bookingId': widget.bookingID,
                           },
                         );
                       }

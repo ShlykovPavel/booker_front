@@ -12,6 +12,7 @@ class BookingConfirmationScreen extends StatefulWidget {
   final bool isAllDay;
   final int bookingEntityId;
   final bool isEditMode;
+  final int bookingId;
 
   const BookingConfirmationScreen({
     super.key,
@@ -20,6 +21,7 @@ class BookingConfirmationScreen extends StatefulWidget {
     required this.endTime,
     required this.isAllDay,
     required this.bookingEntityId,
+    required this.bookingId,
     this.isEditMode = false,
   });
 
@@ -109,7 +111,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
       };
 
       final response = await BookingRepository()
-          .updateBooking(widget.bookingEntityId, bookingRequest);
+          .updateBooking(widget.bookingId, bookingRequest);
       if (response.statusCode == 200) {
         final responseData = response.data as Map<String, dynamic>;
         final bookingId = responseData['id'] as int;
