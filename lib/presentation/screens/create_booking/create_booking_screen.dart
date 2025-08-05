@@ -1,14 +1,20 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart';
-import '../booking_confirmation/booking_confirmation_screen.dart';
 
 class CreateBookingScreen extends StatefulWidget {
   final DateTime selectedDay;
+  final DateTime? startDate;
+  final DateTime? endDate;
   final int bookingEntityId;
 
-  const CreateBookingScreen({super.key, required this.selectedDay, required this.bookingEntityId});
+  const CreateBookingScreen(
+      {super.key,
+      required this.selectedDay,
+      required this.bookingEntityId,
+      this.startDate,
+      this.endDate});
 
   @override
   State<CreateBookingScreen> createState() => _CreateBookingScreenState();
@@ -23,8 +29,12 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
   @override
   void initState() {
     super.initState();
-    _startTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, 9);
-    _endTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, 17);
+    _startTime = widget.startDate ??
+        DateTime(widget.selectedDay.year, widget.selectedDay.month,
+            widget.selectedDay.day, 9);
+    _endTime = widget.endDate ??
+        DateTime(widget.selectedDay.year, widget.selectedDay.month,
+            widget.selectedDay.day, 17);
     _selectedPickerTime = _startTime;
   }
 
@@ -40,7 +50,12 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
       );
       if (picked != null) {
         setState(() {
-          _startTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, picked.hour, picked.minute);
+          _startTime = DateTime(
+              widget.selectedDay.year,
+              widget.selectedDay.month,
+              widget.selectedDay.day,
+              picked.hour,
+              picked.minute);
         });
         _updateButtonState();
       }
@@ -54,12 +69,14 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
         context: context,
         barrierDismissible: true,
         builder: (BuildContext context) {
-          return _buildTimePickerDialog(initialTime, 'Выберите время окончания');
+          return _buildTimePickerDialog(
+              initialTime, 'Выберите время окончания');
         },
       );
       if (picked != null) {
         setState(() {
-          _endTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, picked.hour, picked.minute);
+          _endTime = DateTime(widget.selectedDay.year, widget.selectedDay.month,
+              widget.selectedDay.day, picked.hour, picked.minute);
         });
         _updateButtonState();
       }
@@ -67,7 +84,12 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
   }
 
   Widget _buildTimePickerDialog(TimeOfDay initialTime, String title) {
-    DateTime selectedDateTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, initialTime.hour, initialTime.minute);
+    DateTime selectedDateTime = DateTime(
+        widget.selectedDay.year,
+        widget.selectedDay.month,
+        widget.selectedDay.day,
+        initialTime.hour,
+        initialTime.minute);
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -82,7 +104,10 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -102,15 +127,18 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Отмена', style: TextStyle(color: Colors.blue)),
+                  child: const Text('Отмена',
+                      style: TextStyle(color: Colors.blue)),
                 ),
                 const SizedBox(width: 8),
                 TextButton(
                   onPressed: () {
-                    final selectedTime = TimeOfDay.fromDateTime(selectedDateTime);
+                    final selectedTime =
+                        TimeOfDay.fromDateTime(selectedDateTime);
                     Navigator.pop(context, selectedTime);
                   },
-                  child: const Text('Готово', style: TextStyle(color: Colors.blue)),
+                  child: const Text('Готово',
+                      style: TextStyle(color: Colors.blue)),
                 ),
               ],
             ),
@@ -124,8 +152,10 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
     setState(() {
       _isAllDay = value;
       if (_isAllDay) {
-        _startTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, 0, 0);
-        _endTime = DateTime(widget.selectedDay.year, widget.selectedDay.month, widget.selectedDay.day, 23, 59);
+        _startTime = DateTime(widget.selectedDay.year, widget.selectedDay.month,
+            widget.selectedDay.day, 0, 0);
+        _endTime = DateTime(widget.selectedDay.year, widget.selectedDay.month,
+            widget.selectedDay.day, 23, 59);
       }
       _updateButtonState();
     });
@@ -137,7 +167,7 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isButtonEnabled = _isAllDay || (_startTime != null && _endTime != null && _endTime.isAfter(_startTime));
+    final isButtonEnabled = _isAllDay || (_endTime.isAfter(_startTime));
 
     return Scaffold(
       appBar: AppBar(
@@ -172,8 +202,9 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
                       OutlinedButton(
                         onPressed: _isAllDay ? null : _selectStartTime,
                         child: Text(
-                          DateFormat('HH:mm').format(_startTime),
-                          style: TextStyle(color: _isAllDay ? Colors.grey : null),
+                          DateFormat('HH:mm').format(_startTime.toLocal()),
+                          style:
+                              TextStyle(color: _isAllDay ? Colors.grey : null),
                         ),
                       ),
                     ],
@@ -189,8 +220,9 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
                       OutlinedButton(
                         onPressed: _isAllDay ? null : _selectEndTime,
                         child: Text(
-                          DateFormat('HH:mm').format(_endTime),
-                          style: TextStyle(color: _isAllDay ? Colors.grey : null),
+                          DateFormat('HH:mm').format(_endTime.toLocal()),
+                          style:
+                              TextStyle(color: _isAllDay ? Colors.grey : null),
                         ),
                       ),
                     ],
@@ -215,17 +247,17 @@ class _CreateBookingScreenState extends State<CreateBookingScreen> {
               child: ElevatedButton(
                 onPressed: isButtonEnabled
                     ? () {
-                  context.push(
-                    '/booking-confirmation',
-                    extra: {
-                      'selectedDay': widget.selectedDay,
-                      'startTime': _startTime,
-                      'endTime': _endTime,
-                      'isAllDay': _isAllDay,
-                      'bookingEntityId': widget.bookingEntityId,
-                    },
-                  );
-                }
+                        context.push(
+                          '/booking-confirmation',
+                          extra: {
+                            'selectedDay': widget.selectedDay,
+                            'startTime': _startTime,
+                            'endTime': _endTime,
+                            'isAllDay': _isAllDay,
+                            'bookingEntityId': widget.bookingEntityId,
+                          },
+                        );
+                      }
                     : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isButtonEnabled ? Colors.blue : Colors.grey,
