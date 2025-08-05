@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import '././/./data/repositories/booking_repository.dart';
 import 'bloc/booking_calendar_bloc.dart';
 import 'widgets/booking_tile.dart';
-import './../booking_entity/bloc/booking_entity_bloc.dart';
-import '././/./data/repositories/booking_repository.dart';
-
-
-
 
 class BookingCalendarScreen extends StatelessWidget {
   final int bookingEntityId;
@@ -38,7 +35,8 @@ class BookingCalendarScreen extends StatelessWidget {
             BlocBuilder<BookingCalendarBloc, BookingCalendarState>(
               builder: (context, state) {
                 if (state is BookingCalendarLoading) {
-                  return const Center(child: CircularProgressIndicator(color: Colors.blue));
+                  return const Center(
+                      child: CircularProgressIndicator(color: Colors.blue));
                 }
                 if (state is BookingCalendarLoaded) {
                   return TableCalendar(
@@ -50,10 +48,14 @@ class BookingCalendarScreen extends StatelessWidget {
                       return isSameDay(state.selectedDay, day);
                     },
                     onDaySelected: (selectedDay, focusedDay) {
-                      context.read<BookingCalendarBloc>().add(SelectDay(selectedDay, focusedDay));
+                      context
+                          .read<BookingCalendarBloc>()
+                          .add(SelectDay(selectedDay, focusedDay));
                     },
                     onPageChanged: (focusedDay) {
-                      context.read<BookingCalendarBloc>().add(SelectDay(state.selectedDay, focusedDay));
+                      context
+                          .read<BookingCalendarBloc>()
+                          .add(SelectDay(state.selectedDay, focusedDay));
                     },
                     calendarStyle: CalendarStyle(
                       todayDecoration: BoxDecoration(
@@ -79,8 +81,9 @@ class BookingCalendarScreen extends StatelessWidget {
                       if (state.bookingsList.bookings.isNotEmpty) {
                         final events = state.bookingsList.bookings
                             .where((booking) =>
-                        booking.bookingEntity == bookingEntityId &&
-                            (isSameDay(day, booking.startTime) || isSameDay(day, booking.endTime)))
+                                booking.bookingEntity == bookingEntityId &&
+                                (isSameDay(day, booking.startTime) ||
+                                    isSameDay(day, booking.endTime)))
                             .toList();
                         print('Day: $day, Events: $events');
                         return events;
@@ -102,9 +105,12 @@ class BookingCalendarScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue),
                           onPressed: () {
-                            context.read<BookingCalendarBloc>().add(LoadBookings(bookingEntityId));
+                            context
+                                .read<BookingCalendarBloc>()
+                                .add(LoadBookings(bookingEntityId));
                           },
                           child: const Text(
                             'Попробовать снова',
@@ -125,8 +131,8 @@ class BookingCalendarScreen extends StatelessWidget {
                   if (state is BookingCalendarLoaded) {
                     final bookingsForDay = state.bookingsList.bookings
                         .where((booking) =>
-                    booking.bookingEntity == bookingEntityId &&
-                        isSameDay(state.selectedDay, booking.startTime))
+                            booking.bookingEntity == bookingEntityId &&
+                            isSameDay(state.selectedDay, booking.startTime))
                         .toList();
                     if (bookingsForDay.isEmpty) {
                       return const Center(
@@ -151,7 +157,8 @@ class BookingCalendarScreen extends StatelessWidget {
                         return BookingTile(
                           booking: booking,
                           onTap: () {
-                            print('Tapped booking ID: ${booking.id}'); // Отладка
+                            print(
+                                'Tapped booking ID: ${booking.id}'); // Отладка
                             _showBookingDetail(context, booking.id);
                           },
                         );
@@ -180,12 +187,14 @@ class BookingCalendarScreen extends StatelessWidget {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator(color: Colors.blue)),
+      builder: (context) =>
+          const Center(child: CircularProgressIndicator(color: Colors.blue)),
     );
     try {
       final repository = BookingRepository();
       final response = await repository.getBooking(bookingId);
-      print('Response status: ${response.statusCode}, Data: ${response.data}'); // Отладка
+      print(
+          'Response status: ${response.statusCode}, Data: ${response.data}'); // Отладка
       if (response.statusCode == 200) {
         Navigator.pop(context); // Закрываем микролоадер
         context.push('/booking-detail/$bookingId');
