@@ -5,6 +5,8 @@ import '../screens/booking_entity/booking_entity_screen.dart';
 import '../screens/booking_calendar/booking_calendar_screen.dart';
 import '../screens/booking_detail/booking_detail_screen.dart';
 import '../screens/edit_booking/edit_booking_screen.dart';
+import '../screens/create_booking/create_booking_screen.dart';
+import '../screens/booking_confirmation/booking_confirmation_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/booking',
@@ -39,6 +41,31 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final id = int.parse(state.pathParameters['id']!);
         return EditBookingScreen(bookingId: id);
+      },
+    ),
+    GoRoute(
+      path: '/create-booking',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        final selectedDay = extra?['selectedDay'] as DateTime?;
+        final bookingEntityId = extra?['bookingEntityId'] as int?;
+        return CreateBookingScreen(
+          selectedDay: selectedDay ?? DateTime.now(),
+          bookingEntityId: bookingEntityId ?? 0,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/booking-confirmation',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return BookingConfirmationScreen(
+          selectedDay: extra?['selectedDay'] as DateTime,
+          startTime: extra?['startTime'] as DateTime,
+          endTime: extra?['endTime'] as DateTime,
+          isAllDay: extra?['isAllDay'] as bool,
+          bookingEntityId: extra?['bookingEntityId'] as int,
+        );
       },
     ),
   ],

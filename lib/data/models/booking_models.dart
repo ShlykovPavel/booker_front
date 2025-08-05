@@ -60,7 +60,6 @@ class BookingTypeList {
   }
 }
 
-
 class BookingTypeEntitiesResponse {
   final int id;
   final String name;
@@ -81,6 +80,15 @@ class BookingTypeEntitiesResponse {
   }
 }
 
+class ResponseId {
+  final int id;
+
+  ResponseId({required this.id});
+
+  factory ResponseId.fromJson(Map<String, dynamic> json) {
+    return ResponseId(id: json['id']);
+  }
+}
 
 class BookingInfo {
   final int id;

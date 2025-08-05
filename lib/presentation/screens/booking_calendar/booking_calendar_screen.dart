@@ -1,10 +1,10 @@
+import 'package:booker_front/data/repositories/booking_repository.dart';
+import 'package:booker_front/presentation/screens/booking_calendar/bloc/booking_calendar_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '././/./data/repositories/booking_repository.dart';
-import 'bloc/booking_calendar_bloc.dart';
 import 'widgets/booking_tile.dart';
 
 class BookingCalendarScreen extends StatelessWidget {
@@ -31,7 +31,6 @@ class BookingCalendarScreen extends StatelessWidget {
         ),
         body: Column(
           children: [
-            // Блок календаря
             BlocBuilder<BookingCalendarBloc, BookingCalendarState>(
               builder: (context, state) {
                 if (state is BookingCalendarLoading) {
@@ -124,7 +123,6 @@ class BookingCalendarScreen extends StatelessWidget {
                 return const SizedBox.shrink();
               },
             ),
-            // Блок списка бронирований
             Expanded(
               child: BlocBuilder<BookingCalendarBloc, BookingCalendarState>(
                 builder: (context, state) {
@@ -171,19 +169,35 @@ class BookingCalendarScreen extends StatelessWidget {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // Логика для "Новое бронирование" (можно расширить позже)
+        floatingActionButton: Builder(
+          builder: (context) {
+            return BlocBuilder<BookingCalendarBloc, BookingCalendarState>(
+              builder: (context, state) {
+                DateTime selectedDay = DateTime.now();
+                if (state is BookingCalendarLoaded) {
+                  selectedDay = state.selectedDay;
+                }
+                final bloc = context.read<BookingCalendarBloc>();
+                return FloatingActionButton(
+                  onPressed: () {
+                    context.push('/create-booking', extra: {
+                      'selectedDay': selectedDay,
+                      'bookingEntityId': bookingEntityId,
+                      'bloc': bloc, // Передаём Bloc
+                    });
+                  },
+                  backgroundColor: Colors.blue,
+                  child: const Icon(Icons.add, color: Colors.white),
+                );
+              },
+            );
           },
-          backgroundColor: Colors.blue,
-          child: const Icon(Icons.add, color: Colors.white),
         ),
       ),
     );
   }
 
   void _showBookingDetail(BuildContext context, int bookingId) async {
-    print('Fetching booking detail for ID: $bookingId'); // Отладка
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -196,7 +210,7 @@ class BookingCalendarScreen extends StatelessWidget {
       print(
           'Response status: ${response.statusCode}, Data: ${response.data}'); // Отладка
       if (response.statusCode == 200) {
-        Navigator.pop(context); // Закрываем микролоадер
+        Navigator.pop(context);
         context.push('/booking-detail/$bookingId');
       } else {
         Navigator.pop(context);
