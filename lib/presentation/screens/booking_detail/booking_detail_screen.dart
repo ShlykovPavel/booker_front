@@ -1,3 +1,4 @@
+import 'package:booker_front/presentation/screens/booking_entity/bloc/booking_entity_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -50,7 +51,7 @@ class BookingDetailScreen extends StatelessWidget {
                 DateFormat formatter = DateFormat('HH:mm');
                 String formattedStartTime = formatter.format(localStartTime);
                 String formattedEndTime = formatter.format(localEndTime);
-
+                final bookingEntityBloc = context.read<BookingEntityBloc>();
                 return Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -62,16 +63,17 @@ class BookingDetailScreen extends StatelessWidget {
                       Text('User ID: ${state.bookingInfo.userId}',
                           style: const TextStyle(fontSize: 18)),
                       const SizedBox(height: 8),
-                      Text('Booking Entity: ${state.bookingInfo.bookingEntity}',
+                      Text(
+                          'Название объекта: ${bookingEntityBloc.state is BookingEntityLoaded ? (bookingEntityBloc.state as BookingEntityLoaded).entities.firstWhere((e) => e.id == state.bookingInfo.bookingEntity).name ?? 'Неизвестно' : 'Загрузка...'}',
                           style: const TextStyle(fontSize: 18)),
                       const SizedBox(height: 8),
-                      Text('Start Time: $formattedStartTime',
+                      Text('Время начала: $formattedStartTime',
                           style: const TextStyle(fontSize: 18)),
                       const SizedBox(height: 8),
-                      Text('End Time: $formattedEndTime',
+                      Text('Время окончания: $formattedEndTime',
                           style: const TextStyle(fontSize: 18)),
                       const SizedBox(height: 8),
-                      Text('Status: ${state.bookingInfo.status}',
+                      Text('Статус: ${state.bookingInfo.status}',
                           style: const TextStyle(fontSize: 18)),
                       const Spacer(),
                       Align(

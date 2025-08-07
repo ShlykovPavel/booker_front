@@ -1,7 +1,9 @@
 import 'package:booker_front/data/models/booking_models.dart';
 import 'package:booker_front/data/repositories/booking_repository.dart';
 import 'package:booker_front/presentation/screens/booking_calendar/bloc/booking_calendar_bloc.dart';
+import 'package:booker_front/presentation/screens/booking_entity/bloc/booking_entity_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -275,7 +277,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
         ),
       );
     }
-
+    final bookingEntityBloc = context.read<BookingEntityBloc>();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -309,7 +311,7 @@ class _BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Объект: ${widget.bookingEntityId}',
+              'Название объекта: ${bookingEntityBloc.state is BookingEntityLoaded ? (bookingEntityBloc.state as BookingEntityLoaded).entities.firstWhere((e) => e.id == widget.bookingEntityId).name ?? 'Неизвестно' : 'Загрузка...'}',
               style: const TextStyle(fontSize: 16),
             ),
             const Spacer(),
